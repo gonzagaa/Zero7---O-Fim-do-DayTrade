@@ -1,0 +1,165 @@
+#inicio {
+    overflow: hidden;
+    position: relative;
+
+    padding-bottom: 8rem;
+    padding-top: 0;
+}
+
+#inicio .capa {
+    overflow: hidden;
+    border-radius: 2rem;
+    margin-bottom: 2rem;
+}
+
+#inicio .capa img {
+    width: 100%;
+    height: 100%;
+
+    transition: all 300ms ease-in-out;
+}
+
+#inicio .capa:hover img {
+    transform: scale(1.05);
+    filter: brightness(1.3);
+    cursor: pointer;
+}
+
+#inicio header {
+    display: initial;
+}
+
+#inicio header h2:nth-child(1) {
+    margin-bottom: 2rem;
+}
+
+#inicio header p:nth-child(4) {
+    color: var(--primary-color);
+    font-size: 1.4rem;
+    font-weight: 600;
+    
+    background: #fff;
+    padding: 2rem;
+    border-radius: 1rem;
+    padding-inline: 4rem;
+}
+
+#inicio .topics {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+
+    margin-top: 2rem;
+}
+
+#inicio .topic {
+    border-radius: 1rem;
+    padding: 1rem;
+
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    background: #ffffff14;
+
+    width: 100%;
+}
+
+#inicio .topic ion-icon {
+    min-height: 2rem;
+    min-width: 2rem;
+    max-width: 2rem;
+    max-height: 2rem;
+    color: #fff;
+}
+
+#inicio .swiper {
+    margin-top: 2rem;
+}
+
+#inicio .swiper img {
+    width: 100%;
+    border-radius: 1rem;
+}
+
+#inicio .swiper-pagination-bullet {
+    background-color: #0000005f; 
+    opacity: 1; 
+    width: 15px;
+    height: 4px;
+    border-radius: .3rem;
+}
+  
+#inicio .swiper-pagination-bullet-active {
+    background-color: #BE0000; 
+}
+
+#inicio .swiper-button-next {
+    top: 50%;
+    color: #ffffff; 
+    transform: scale(.5);
+}
+  
+#inicio .swiper-button-prev {
+    top: 50%;
+    color: #ffffff; 
+    transform: scale(.5);
+}
+
+#inicio h2.dois {
+    font-size: 1.6rem;
+    margin-top: 3rem;
+}
+
+#inicio header.dois p {
+    margin-block: 2rem;
+}
+
+@media (min-width: 1080px) {
+    section#inicio .wrapper .content header h2,
+    section#inicio .wrapper .content header p {
+        padding-inline: 15%;
+    }
+
+    section#inicio .wrapper .content header .topics {
+        margin-top: 3rem;
+    }
+
+    section#inicio .wrapper .content header .topics p {
+        padding-inline: 0;
+    }
+
+    section#inicio .content .topics {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+
+    section#inicio .content .topic {
+        background: linear-gradient(45deg, #d3d3d3, #ffffff);
+    }
+
+    section#inicio .content .topic ion-icon {
+color: #000;
+    }
+
+    section#inicio .content .topic p {
+        color: #000;
+    }
+
+    section#inicio .wrapper .content header {
+        display: flex;
+        flex-direction: column;
+    }
+
+    section#inicio h2.dois {
+        font-size: 2rem;
+    }
+
+    section#inicio header.dois p {
+        font-size: 2rem;
+        width: 90%;
+        margin-block: 3rem;
+    }
+}

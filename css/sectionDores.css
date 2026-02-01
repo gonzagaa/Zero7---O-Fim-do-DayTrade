@@ -1,0 +1,101 @@
+#dores {
+    overflow: hidden;
+    position: relative;
+}
+
+#dores img.bgsection {
+    position: absolute;
+    width: 100%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 0;
+    height: 100%;
+
+    filter: brightness(.8);
+}
+
+#dores .content {
+    position: relative;
+    z-index: 1;
+}
+
+#dores header {
+    margin-bottom: 0;
+}
+
+#dores .cards {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+
+    width: 100%;
+
+    margin-block: 2rem;
+}
+
+#dores .cards .card {
+    padding: 4rem;
+    border-radius: 1rem;
+
+    display: flex;
+    gap: 1rem;
+    position: relative;
+    overflow: hidden;
+
+    width: 100%;
+
+    background: linear-gradient(45deg, #080808, #131313);
+}
+
+#dores .cards .card p {
+    text-align: left;
+}
+
+#dores .cards .card img.icon {
+    width: 2rem;
+    min-width: 2rem;
+    height: 2rem;
+    min-height: 2rem;
+    max-width: 2rem;
+    max-height: 2rem;
+}
+
+#dores .cards .card img.bg {
+    position: absolute;
+    right: -20%;
+    top: 50%;
+    transform: translate(0, -50%);
+    mask-image: linear-gradient(45deg, #000, transparent);
+
+    width: 30%;
+    opacity: .3;
+}
+
+#dores header h2.dois {
+    font-size: 1.6rem;
+    margin-bottom: 1rem;
+}
+
+#dores a button {
+    margin-top: 2rem;
+}
+
+@media (min-width: 1080px) {
+    section#dores .cards {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+    }
+
+    section#dores .cards .card {
+        padding-inline: 2rem;
+        background: linear-gradient(45deg, #d3d3d3, #ffffff);
+        
+    }
+
+    section#dores .cards .card p {
+        color: #000;
+    }
+}
