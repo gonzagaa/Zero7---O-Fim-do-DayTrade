@@ -84,6 +84,11 @@
     text-transform: uppercase;
     font-weight: 500;
   }
+
+  #home h1.v3,
+  #home h1.v2 {
+    font-size: 2.3rem;
+  }
   
   #home h1 span {
     font-family: var(--ncs);
@@ -291,6 +296,11 @@
       margin-top: 0;
     }
 
+    header#home .content h1.v3,
+    header#home .content h1.v2 {
+      font-size: 3.5rem;
+    }
+
     header#home .content h1 span {
     font-size: 4.5rem;
     background: var(--gradient);
@@ -330,6 +340,11 @@
 
     header#home .content h1 {
       font-size: 3.5rem;
+    }
+
+    header#home .content h1.v3,
+    header#home .content h1.v2 {
+      font-size: 4.5rem;
     }
 
     header#home .content h1 span {
