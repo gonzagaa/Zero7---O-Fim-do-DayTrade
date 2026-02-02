@@ -1,0 +1,274 @@
+/* Overlay */
+.modal-overlay{
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.6);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  z-index: 9999;
+
+  /* animação */
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .25s ease;
+}
+
+/* Caixa do modal */
+.modal{
+  width: min(720px, 100%);
+  background: #000000; /* ajuste p/ sua identidade */
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(11, 11, 11, 0.5);
+
+  /* animação */
+  transform: translateY(14px) scale(.98);
+  opacity: 0;
+  transition: transform .25s ease, opacity .25s ease;
+}
+
+/* Header */
+header.modal-header{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: row;
+  gap: 12px;
+  padding: 16px 18px;
+  background: rgba(255,255,255,.03);
+  border-bottom: 1px solid rgba(255,255,255,.08);
+  width: 100%;
+  margin-bottom: 0;
+}
+
+.modal-header h2{
+  margin: 0;
+  font-size: 18px;
+  color: #fff;
+  font-weight: 600;
+  text-align: left;
+}
+
+.modal-close{
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.04);
+  color: #fff;
+  font-size: 26px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.modal-close:hover{
+  background: rgba(255,255,255,.08);
+}
+
+/* Conteúdo */
+.modal-body{
+  padding: 18px;
+  color: #fff;
+}
+
+/* Estado aberto */
+.modal-overlay.is-open{
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-overlay.is-open .modal{
+  transform: translateY(0) scale(1);
+  opacity: 1;
+}
+
+/* (Opcional) trava scroll do body quando modal abrir */
+body.modal-open{
+  overflow: hidden;
+}
+
+#form-o-fim-do-day-trade-9465f02fe24da0f200ca {
+    padding-block: 0;
+}
+
+/* =========================================================
+   RD STATION (override) — SOMENTE dentro do modal
+   Container: #modalFormulario + div principal do RD
+========================================================= */
+
+#modalFormulario #o-fim-do-day-trade-9465f02fe24da0f200ca{
+  width: 100%;
+}
+
+/* remove o fundo branco/cinza que o RD injeta em section/coluna */
+#modalFormulario #o-fim-do-day-trade-9465f02fe24da0f200ca section,
+#modalFormulario #o-fim-do-day-trade-9465f02fe24da0f200ca .bricks--section,
+#modalFormulario #o-fim-do-day-trade-9465f02fe24da0f200ca .rd-section{
+  background: transparent !important;
+}
+
+/* FORÇA nos IDs que você mostrou no F12 (bem específico) */
+#modalFormulario #rd-section-ml5du7le{
+  background: transparent !important;
+  border: none !important;
+}
+#modalFormulario #rd-column-ml5du7lk > div{
+  background: transparent !important;
+  padding: 0 !important;
+}
+
+/* container do form */
+#modalFormulario #rd-form-ml5du7ll,
+#modalFormulario #o-fim-do-day-trade-9465f02fe24da0f200ca [id^="rd-form-"]{
+  max-width: 100% !important;
+  width: 100% !important;
+  margin: 0 !important;
+}
+
+/* fieldset e campos */
+#modalFormulario #rd-form-ml5du7ll .bricks-form__fieldset,
+#modalFormulario #o-fim-do-day-trade-9465f02fe24da0f200ca [id^="rd-form-"] .bricks-form__fieldset{
+  gap: 12px !important;
+}
+
+/* labels (Nome*, Email*, Telefone*) */
+#modalFormulario #rd-form-ml5du7ll .bricks-form__label,
+#modalFormulario #o-fim-do-day-trade-9465f02fe24da0f200ca [id^="rd-form-"] .bricks-form__label{
+  color: rgba(255,255,255,.75) !important;
+  font-family: inherit !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  letter-spacing: .04em !important;
+  text-transform: uppercase !important;
+  margin: 0 0 6px 2px !important;
+}
+
+/* inputs */
+#modalFormulario #rd-form-ml5du7ll .bricks-form__input,
+#modalFormulario #o-fim-do-day-trade-9465f02fe24da0f200ca [id^="rd-form-"] .bricks-form__input{
+  height: 46px !important;
+  border-radius: 12px !important;
+  border: 1px solid rgba(255,255,255,.12) !important;
+  background: rgba(255,255,255,.06) !important;
+  color: #fff !important;
+
+  font-family: inherit !important;
+  font-size: 16px !important;
+
+  padding: 0 14px !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* placeholder (o RD deixa transparente; aqui deixa visível) */
+#modalFormulario #rd-form-ml5du7ll .bricks-form__input::placeholder,
+#modalFormulario #o-fim-do-day-trade-9465f02fe24da0f200ca [id^="rd-form-"] .bricks-form__input::placeholder{
+  color: rgba(255,255,255,.35) !important;
+  opacity: 1 !important;
+}
+
+/* foco bonito */
+#modalFormulario #rd-form-ml5du7ll .bricks-form__input:focus,
+#modalFormulario #o-fim-do-day-trade-9465f02fe24da0f200ca [id^="rd-form-"] .bricks-form__input:focus{
+  border-color: rgba(145, 0, 0, 0.85) !important; /* #005B91 */
+  box-shadow: 0 0 0 4px rgba(145, 0, 0, 0.25) !important;
+}
+
+/* remove “cinza” do RD nos wrappers */
+#modalFormulario #rd-form-ml5du7ll .bricks-form__field,
+#modalFormulario #o-fim-do-day-trade-9465f02fe24da0f200ca [id^="rd-form-"] .bricks-form__field{
+  margin-bottom: 0 !important;
+  padding: 0 !important;
+}
+
+/* ERRO */
+#modalFormulario #rd-form-ml5du7ll label.error,
+#modalFormulario #o-fim-do-day-trade-9465f02fe24da0f200ca [id^="rd-form-"] label.error{
+  color: #ff5a6a !important;
+  font-size: 12px !important;
+  padding: 6px 0 0 4px !important;
+}
+
+/* =========================================================
+   TELEFONE (Select2 com bandeira)
+========================================================= */
+
+/* mantém layout alinhado */
+#modalFormulario .with-select-flags > .phone-input-group{
+  display: flex !important;
+  gap: 10px !important;
+  align-items: center !important;
+}
+
+/* “quadradinho” do país */
+#modalFormulario .with-select-flags > .phone-input-group > .select2-container > .select2-choice{
+  height: 46px !important;
+  line-height: 46px !important;
+  border-radius: 12px !important;
+  border: 1px solid rgba(255,255,255,.12) !important;
+  background: rgba(255,255,255,.06) !important;
+  color: #fff !important;
+
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 10px !important;
+}
+
+/* seta do select2 (remove estilo feio) */
+#modalFormulario .select2-container .select2-choice .select2-arrow{
+  background: none !important;
+  border: none !important;
+}
+
+/* bandeira centralizada */
+#modalFormulario .with-select-flags .flag{
+  margin: 0 !important;
+  border-radius: 6px !important;
+}
+
+/* campo de telefone ao lado (ocupa tudo) */
+#modalFormulario .with-select-flags > .phone-input-group > .phone{
+  width: 100% !important;
+  border-radius: 12px !important;
+}
+
+/* =========================================================
+   BOTÃO “Cadastrar” (sobrescrever o verde feio)
+========================================================= */
+
+/* força no ID do botão do seu F12 */
+#modalFormulario #rd-button-ml5du7lo,
+#modalFormulario #o-fim-do-day-trade-9465f02fe24da0f200ca button.rd-button,
+#modalFormulario #o-fim-do-day-trade-9465f02fe24da0f200ca .bricks-form__submit button{
+  height: 52px !important;
+  border-radius: 14px !important;
+  border: none !important;
+
+  background: var(--gradient) !important;
+  color: #fff !important;
+
+  font-family: inherit !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  letter-spacing: .02em !important;
+
+  margin-top: 14px !important;
+  box-shadow: 0 18px 40px rgba(0,0,0,.35) !important;
+  transition: transform .15s ease, filter .15s ease !important;
+}
+
+#modalFormulario #rd-button-ml5du7lo:hover,
+#modalFormulario #o-fim-do-day-trade-9465f02fe24da0f200ca button.rd-button:hover{
+  filter: brightness(1.08) !important;
+  transform: translateY(-1px) !important;
+}
+
+/* respiro geral */
+#modalFormulario #o-fim-do-day-trade-9465f02fe24da0f200ca{
+  padding: 0 !important;
+}

@@ -36,6 +36,122 @@
 </head>
 <body id="body" class="smooth-scroll-wrapper">
 
+    <!-- MODAL -->
+    <div class="modal-overlay" id="modalFormulario" aria-hidden="true">
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitulo">
+        <header class="modal-header">
+          <h2 id="modalTitulo">Preencha o formulário</h2>
+          <button class="modal-close" type="button" aria-label="Fechar modal">&times;</button>
+        </header>
+
+        <div class="modal-body">
+          <!-- RD Station vai renderizar aqui -->
+          <div role="main" id="o-fim-do-day-trade-9465f02fe24da0f200ca"></div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+  (function () {
+    const overlay = document.getElementById("modalFormulario");
+    const modal = overlay.querySelector(".modal");
+    const btnClose = overlay.querySelector(".modal-close");
+
+    const FORM_ID = "o-fim-do-day-trade-9465f02fe24da0f200ca";
+    const RD_SCRIPT_SRC =
+      "https://d335luupugsy2.cloudfront.net/js/rdstation-forms/stable/rdstation-forms.min.js";
+
+    let rdScriptLoaded = false;
+    let formCreated = false;
+
+    function loadRDScript() {
+      return new Promise((resolve, reject) => {
+        if (rdScriptLoaded || window.RDStationForms) {
+          rdScriptLoaded = true;
+          resolve();
+          return;
+        }
+
+        const existing = document.querySelector(`script[src="${RD_SCRIPT_SRC}"]`);
+        if (existing) {
+          existing.addEventListener("load", () => resolve());
+          existing.addEventListener("error", () => reject());
+          return;
+        }
+
+        const s = document.createElement("script");
+        s.src = RD_SCRIPT_SRC;
+        s.async = true;
+        s.onload = () => {
+          rdScriptLoaded = true;
+          resolve();
+        };
+        s.onerror = () => reject(new Error("Falha ao carregar RDStation Forms"));
+        document.body.appendChild(s);
+      });
+    }
+
+    async function ensureForm() {
+      // cria só 1 vez (o mais seguro)
+      if (formCreated) return;
+
+      await loadRDScript();
+      if (!window.RDStationForms) return;
+
+      // cria o form
+      try {
+        new window.RDStationForms(FORM_ID, "null").createForm();
+        formCreated = true;
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    async function openModal() {
+      overlay.classList.add("is-open");
+      overlay.setAttribute("aria-hidden", "false");
+      document.body.classList.add("modal-open");
+
+      // foca no modal (acessibilidade)
+      modal.setAttribute("tabindex", "-1");
+      modal.focus();
+
+      // garante que o form seja carregado/criado ao abrir
+      await ensureForm();
+    }
+
+    function closeModal() {
+      overlay.classList.remove("is-open");
+      overlay.setAttribute("aria-hidden", "true");
+      document.body.classList.remove("modal-open");
+    }
+
+    // abre ao clicar em qualquer .abrirFormulario
+    document.addEventListener("click", (e) => {
+      const btn = e.target.closest(".abrirFormulario");
+      if (btn) {
+        e.preventDefault();
+        openModal();
+      }
+    });
+
+    // fecha no X
+    btnClose.addEventListener("click", closeModal);
+
+    // fecha clicando na overlay (mas não fecha clicando dentro do modal)
+    overlay.addEventListener("click", (e) => {
+      if (e.target === overlay) closeModal();
+    });
+
+    // fecha com ESC
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && overlay.classList.contains("is-open")) {
+        closeModal();
+      }
+    });
+  })();
+    </script>
+
     <header class="header" id="home"> 
       <div class="wrapper">
         <div class="content">
@@ -45,7 +161,7 @@
 
                   <p>Em três aulas gratuitas, você vai aprender com base no histórico de dados da Zero7, o que fazem os 5% de traders que são consistentes e profissionais.</p>
 
-                  <a href="#planos"><button class="button">GARANTIR MINHA VAGA GRATUITA</button></a>
+                  <a href="#planos"><button class="button abrirFormulario">GARANTIR MINHA VAGA GRATUITA</button></a>
             </div>              
           </div>
       </div>      
@@ -131,7 +247,7 @@
 
           <header class="dois">
             <p>A Zero7 é muito mais que uma mesa proprietária - somos um ecossistema completo preparado para formar a próxima geração de traders profissionais.</p>
-            <a href="#planos"><button class="button">QUERO FAZER PARTE DOS 5%</button></a>
+            <a href="#planos"><button class="button abrirFormulario">QUERO FAZER PARTE DOS 5%</button></a>
           </header>
         </div>
       </div>
@@ -173,7 +289,7 @@
             <p>Não porque é ruim, mas porque você vai <span>EVOLUIR</span>.</p>
             <p>Day trade é apenas um timeframe. Uma estratégia. <span>Trader profissional é muito mais que isso</span>.</p>
 
-            <a href="#planos"><button class="button">QUERO EVOLUIR COMO TRADER</button></a>
+            <a href="#planos"><button class="button abrirFormulario">QUERO EVOLUIR COMO TRADER</button></a>
           </header>
         </div>
       </div>
@@ -226,7 +342,7 @@
                     </div>
                 </div>
 
-                 <a href="#planos"><button class="button">GARANTIR MINHA TRANSFORMAÇÃO</button></a>
+                 <a href="#planos"><button class="button abrirFormulario">GARANTIR MINHA TRANSFORMAÇÃO</button></a>
             </div>
         </div>
     </section>
