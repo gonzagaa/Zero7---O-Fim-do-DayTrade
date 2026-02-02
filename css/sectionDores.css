@@ -90,8 +90,13 @@
     }
 
     section#dores .cards .card {
+        height: 100%;
         padding-inline: 2rem;
         background: linear-gradient(45deg, #d3d3d3, #ffffff);
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
         
     }
 
