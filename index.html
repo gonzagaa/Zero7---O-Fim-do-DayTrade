@@ -37,120 +37,256 @@
 <body id="body" class="smooth-scroll-wrapper">
 
     <!-- MODAL -->
-    <div class="modal-overlay" id="modalFormulario" aria-hidden="true">
-      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitulo">
-        <header class="modal-header">
-          <h2 id="modalTitulo">Preencha o formulário</h2>
-          <button class="modal-close" type="button" aria-label="Fechar modal">&times;</button>
-        </header>
+<div class="modal-overlay" id="modalFormulario" aria-hidden="true">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitulo">
+    <header class="modal-header">
+      <h2 id="modalTitulo">Preencha o formulário</h2>
+      <button class="modal-close" type="button" aria-label="Fechar modal">&times;</button>
+    </header>
 
-        <div class="modal-body">
-          <!-- RD Station vai renderizar aqui -->
-          <div role="main" id="o-fim-do-day-trade-9465f02fe24da0f200ca"></div>
-        </div>
-      </div>
+    <div class="modal-body">
+      <!-- RD Station vai renderizar aqui -->
+      <div role="main" id="o-fim-do-day-trade-9465f02fe24da0f200ca"></div>
     </div>
+  </div>
+</div>
 
-    <script>
-  (function () {
-    const overlay = document.getElementById("modalFormulario");
-    const modal = overlay.querySelector(".modal");
-    const btnClose = overlay.querySelector(".modal-close");
+<script>
+(function () {
+  const overlay = document.getElementById("modalFormulario");
+  const modal = overlay.querySelector(".modal");
+  const btnClose = overlay.querySelector(".modal-close");
 
-    const FORM_ID = "o-fim-do-day-trade-9465f02fe24da0f200ca";
-    const RD_SCRIPT_SRC =
-      "https://d335luupugsy2.cloudfront.net/js/rdstation-forms/stable/rdstation-forms.min.js";
+  const FORM_ID = "o-fim-do-day-trade-9465f02fe24da0f200ca";
+  const RD_SCRIPT_SRC =
+    "https://d335luupugsy2.cloudfront.net/js/rdstation-forms/stable/rdstation-forms.min.js";
 
-    let rdScriptLoaded = false;
-    let formCreated = false;
+  // ===== UTM SETUP =====
+  const UTM_KEYS = ["utm_campaign", "utm_content", "utm_id", "utm_medium", "utm_source", "utm_term"];
+  const STORAGE_KEY = "rd_utms_last";
 
-    function loadRDScript() {
-      return new Promise((resolve, reject) => {
-        if (rdScriptLoaded || window.RDStationForms) {
-          rdScriptLoaded = true;
-          resolve();
-          return;
-        }
+  function getUTMsFromURL() {
+    const p = new URLSearchParams(window.location.search);
+    const out = {};
+    UTM_KEYS.forEach(k => {
+      const v = p.get(k);
+      if (v !== null && v !== "") out[k] = v;
+    });
+    return out;
+  }
 
-        const existing = document.querySelector(`script[src="${RD_SCRIPT_SRC}"]`);
-        if (existing) {
-          existing.addEventListener("load", () => resolve());
-          existing.addEventListener("error", () => reject());
-          return;
-        }
+  function readStoredUTMs() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}"); }
+    catch { return {}; }
+  }
 
-        const s = document.createElement("script");
-        s.src = RD_SCRIPT_SRC;
-        s.async = true;
-        s.onload = () => {
-          rdScriptLoaded = true;
-          resolve();
-        };
-        s.onerror = () => reject(new Error("Falha ao carregar RDStation Forms"));
-        document.body.appendChild(s);
-      });
-    }
+  function storeUTMs(obj) {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(obj)); }
+    catch {}
+  }
 
-    async function ensureForm() {
-      // cria só 1 vez (o mais seguro)
-      if (formCreated) return;
+  // pega UTMs (URL ganha do storage)
+  const utmFromUrl = getUTMsFromURL();
+  const utmFromStore = readStoredUTMs();
+  const UTMS = { ...utmFromStore, ...utmFromUrl };
+  storeUTMs(UTMS);
 
-      await loadRDScript();
-      if (!window.RDStationForms) return;
+  console.log("[UTM] from URL:", utmFromUrl);
+  console.log("[UTM] from storage:", utmFromStore);
+  console.log("[UTM] merged (used):", UTMS);
 
-      // cria o form
-      try {
-        new window.RDStationForms(FORM_ID, "null").createForm();
-        formCreated = true;
-      } catch (e) {
-        console.error(e);
+  // ===== RD LOAD / CREATE =====
+  let rdScriptLoaded = false;
+  let formCreated = false;
+
+  function loadRDScript() {
+    return new Promise((resolve, reject) => {
+      if (rdScriptLoaded || window.RDStationForms) {
+        rdScriptLoaded = true;
+        console.log("[RD] script already loaded");
+        resolve();
+        return;
       }
+
+      const existing = document.querySelector(`script[src="${RD_SCRIPT_SRC}"]`);
+      if (existing) {
+        console.log("[RD] script tag exists, waiting load...");
+        existing.addEventListener("load", () => resolve());
+        existing.addEventListener("error", () => reject());
+        return;
+      }
+
+      console.log("[RD] loading script:", RD_SCRIPT_SRC);
+      const s = document.createElement("script");
+      s.src = RD_SCRIPT_SRC;
+      s.async = true;
+      s.onload = () => {
+        rdScriptLoaded = true;
+        console.log("[RD] script loaded OK");
+        resolve();
+      };
+      s.onerror = () => reject(new Error("Falha ao carregar RDStation Forms"));
+      document.body.appendChild(s);
+    });
+  }
+
+  async function ensureForm() {
+    if (formCreated) return;
+
+    await loadRDScript();
+    if (!window.RDStationForms) {
+      console.warn("[RD] window.RDStationForms not available");
+      return;
     }
 
-    async function openModal() {
-      overlay.classList.add("is-open");
-      overlay.setAttribute("aria-hidden", "false");
-      document.body.classList.add("modal-open");
+    try {
+      console.log("[RD] creating form:", FORM_ID);
+      new window.RDStationForms(FORM_ID, "null").createForm();
+      formCreated = true;
+    } catch (e) {
+      console.error("[RD] createForm error:", e);
+    }
+  }
 
-      // foca no modal (acessibilidade)
-      modal.setAttribute("tabindex", "-1");
-      modal.focus();
+  // ===== APPLY UTMS INTO THE RD FORM =====
+  function hideFieldWrapper(el) {
+    // tenta esconder o container do campo (label + input)
+    const wrapper =
+      el.closest('.bricks-form__field, .bricks-form__field-wrapper, .form-group, .field, [data-testid]') ||
+      el.parentElement;
 
-      // garante que o form seja carregado/criado ao abrir
-      await ensureForm();
+    if (wrapper) wrapper.style.display = "none";
+  }
+
+  function setInputValue(input, value) {
+    input.value = value || "";
+    input.dispatchEvent(new Event("input", { bubbles: true }));
+    input.dispatchEvent(new Event("change", { bubbles: true }));
+  }
+
+  function applyUTMsToRDForm() {
+    const root = document.getElementById(FORM_ID);
+    if (!root) return false;
+
+    // RD geralmente injeta um <form> dentro desse root
+    const form = root.querySelector("form");
+    if (!form) {
+      console.log("[UTM] form not found yet inside #"+FORM_ID);
+      return false;
     }
 
-    function closeModal() {
-      overlay.classList.remove("is-open");
-      overlay.setAttribute("aria-hidden", "true");
-      document.body.classList.remove("modal-open");
+    console.log("[UTM] RD form found! Applying UTMs...");
+
+    // Preenche/Cria inputs cf_utm_*
+    UTM_KEYS.forEach((k) => {
+      const fieldName = "cf_" + k; // <- seu api_identifier
+      let input = form.querySelector(`[name="${fieldName}"]`);
+
+      if (!input) {
+        // Se o campo não existir no HTML do form (por algum motivo),
+        // criamos hidden e anexamos no form
+        input = document.createElement("input");
+        input.type = "hidden";
+        input.name = fieldName;
+        form.appendChild(input);
+        console.log(`[UTM] created missing hidden input: ${fieldName}`);
+      } else {
+        // se existe, garante que fique oculto
+        if (input.tagName === "INPUT") input.type = "hidden";
+        hideFieldWrapper(input);
+        console.log(`[UTM] found input: ${fieldName}`);
+      }
+
+      setInputValue(input, UTMS[k] || "");
+      console.log(`[UTM] set ${fieldName} =`, UTMS[k] || "");
+    });
+
+    // log final do que está no form agora
+    const debugPayload = {};
+    UTM_KEYS.forEach(k => {
+      const n = "cf_" + k;
+      const el = form.querySelector(`[name="${n}"]`);
+      debugPayload[n] = el ? el.value : null;
+    });
+    console.log("[UTM] current values in form:", debugPayload);
+
+    // intercepta submit só pra debug (não bloqueia)
+    if (!form.dataset.utmDebugBound) {
+      form.addEventListener("submit", () => {
+        console.log("[SUBMIT] submitting with UTMs:", debugPayload);
+      }, true);
+      form.dataset.utmDebugBound = "1";
+      console.log("[UTM] submit debug listener bound");
     }
 
-    // abre ao clicar em qualquer .abrirFormulario
-    document.addEventListener("click", (e) => {
-      const btn = e.target.closest(".abrirFormulario");
-      if (btn) {
-        e.preventDefault();
-        openModal();
+    return true;
+  }
+
+  // Observa render do RD e aplica assim que o form aparecer
+  let observer;
+  function startObserver() {
+    if (observer) return;
+    observer = new MutationObserver(() => {
+      const ok = applyUTMsToRDForm();
+      if (ok) {
+        // quando aplicar com sucesso, pode parar o observer
+        observer.disconnect();
+        observer = null;
+        console.log("[UTM] applied successfully. Observer stopped.");
       }
     });
 
-    // fecha no X
-    btnClose.addEventListener("click", closeModal);
+    observer.observe(document.documentElement, { childList: true, subtree: true });
+    console.log("[UTM] observer started (waiting RD render)");
+  }
 
-    // fecha clicando na overlay (mas não fecha clicando dentro do modal)
-    overlay.addEventListener("click", (e) => {
-      if (e.target === overlay) closeModal();
-    });
+  async function openModal() {
+    overlay.classList.add("is-open");
+    overlay.setAttribute("aria-hidden", "false");
+    document.body.classList.add("modal-open");
 
-    // fecha com ESC
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape" && overlay.classList.contains("is-open")) {
-        closeModal();
-      }
-    });
-  })();
-    </script>
+    modal.setAttribute("tabindex", "-1");
+    modal.focus();
+
+    await ensureForm();
+
+    // tenta aplicar agora e também fica observando até renderizar
+    const ok = applyUTMsToRDForm();
+    if (!ok) startObserver();
+  }
+
+  function closeModal() {
+    overlay.classList.remove("is-open");
+    overlay.setAttribute("aria-hidden", "true");
+    document.body.classList.remove("modal-open");
+  }
+
+  // abre ao clicar em qualquer .abrirFormulario
+  document.addEventListener("click", (e) => {
+    const btn = e.target.closest(".abrirFormulario");
+    if (btn) {
+      e.preventDefault();
+      openModal();
+    }
+  });
+
+  // fecha no X
+  btnClose.addEventListener("click", closeModal);
+
+  // fecha clicando na overlay
+  overlay.addEventListener("click", (e) => {
+    if (e.target === overlay) closeModal();
+  });
+
+  // fecha com ESC
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && overlay.classList.contains("is-open")) {
+      closeModal();
+    }
+  });
+})();
+</script>
+
 
     <header class="header" id="home"> 
       <div class="wrapper">
