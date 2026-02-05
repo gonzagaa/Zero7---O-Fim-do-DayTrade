@@ -249,7 +249,7 @@ body.modal-open{
   border-radius: 14px !important;
   border: none !important;
 
-  background: var(--gradient) !important;
+  background: linear-gradient(90deg, #0B7A3B, #35FF8A) !important;
   color: #fff !important;
 
   font-family: inherit !important;

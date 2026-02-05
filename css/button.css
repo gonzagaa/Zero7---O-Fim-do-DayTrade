@@ -28,16 +28,19 @@ body section#form-corrida-zero7-captacao-72bdbbbbbb9d8f539277 button {
   font-weight: 500;
   font-size: 18px;
   line-height: 1.2;
-  background: var(--gradient);
+  background: linear-gradient(90deg, #0B7A3B, #35FF8A);
+
   border: none;
 
-  filter: drop-shadow(0 0 20px #f31d1d49);
+  box-shadow: 0 10px 30px rgba(0, 230, 119, 0.114);
+
   transition: all 300ms ease-in-out;
 }
 
 .button:hover,
 body section#form-corrida-zero7-captacao-72bdbbbbbb9d8f539277 button:hover {
-  filter: drop-shadow(0 0 40px #f31d1d76);
+  box-shadow: 0 10px 30px rgba(0, 230, 118, .22);
+
 }
 
 .button .icon {

@@ -6,12 +6,12 @@
 @import './sectionSobre.css';
 @import './author.css';
 
-@import './button.css';
+@import './button.css?v=2';
 @import './buttonWpp.css';
 @import './obrigado.css';
 @import './head.css';
 @import './modalDepoimento.css';
 @import './barraCarregamento.css';
-@import './modalForm.css';
+@import './modalForm.css?v=2';
 
 
