@@ -19,7 +19,7 @@
         rel="stylesheet"
         href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
     />
-    <link rel="stylesheet" href="../css/index.css?v=2">
+    <link rel="stylesheet" href="../css/index.css?v=2324ew">
 
     <script type="text/javascript" async src="https://d335luupugsy2.cloudfront.net/js/loader-scripts/bfe861c8-ab4c-47c1-9b5d-67742fbce12f-loader.js" ></script>
 
@@ -52,127 +52,242 @@
     </div>
 
     <script>
-  (function () {
-    const overlay = document.getElementById("modalFormulario");
-    const modal = overlay.querySelector(".modal");
-    const btnClose = overlay.querySelector(".modal-close");
+(function () {
+  const overlay = document.getElementById("modalFormulario");
+  const modal = overlay.querySelector(".modal");
+  const btnClose = overlay.querySelector(".modal-close");
 
-    const FORM_ID = "o-fim-do-day-trade-9465f02fe24da0f200ca";
-    const RD_SCRIPT_SRC =
-      "https://d335luupugsy2.cloudfront.net/js/rdstation-forms/stable/rdstation-forms.min.js";
+  const FORM_ID = "o-fim-do-day-trade-9465f02fe24da0f200ca";
+  const RD_SCRIPT_SRC =
+    "https://d335luupugsy2.cloudfront.net/js/rdstation-forms/stable/rdstation-forms.min.js";
 
-    let rdScriptLoaded = false;
-    let formCreated = false;
+  // ===== UTM SETUP =====
+  const UTM_KEYS = ["utm_campaign", "utm_content", "utm_id", "utm_medium", "utm_source", "utm_term"];
+  const STORAGE_KEY = "rd_utms_last";
 
-    function loadRDScript() {
-      return new Promise((resolve, reject) => {
-        if (rdScriptLoaded || window.RDStationForms) {
-          rdScriptLoaded = true;
-          resolve();
-          return;
-        }
+  function getUTMsFromURL() {
+    const p = new URLSearchParams(window.location.search);
+    const out = {};
+    UTM_KEYS.forEach(k => {
+      const v = p.get(k);
+      if (v !== null && v !== "") out[k] = v;
+    });
+    return out;
+  }
 
-        const existing = document.querySelector(`script[src="${RD_SCRIPT_SRC}"]`);
-        if (existing) {
-          existing.addEventListener("load", () => resolve());
-          existing.addEventListener("error", () => reject());
-          return;
-        }
+  function readStoredUTMs() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}"); }
+    catch { return {}; }
+  }
 
-        const s = document.createElement("script");
-        s.src = RD_SCRIPT_SRC;
-        s.async = true;
-        s.onload = () => {
-          rdScriptLoaded = true;
-          resolve();
-        };
-        s.onerror = () => reject(new Error("Falha ao carregar RDStation Forms"));
-        document.body.appendChild(s);
-      });
-    }
+  function storeUTMs(obj) {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(obj)); }
+    catch {}
+  }
 
-    async function ensureForm() {
-      // cria só 1 vez (o mais seguro)
-      if (formCreated) return;
+  // pega UTMs (URL ganha do storage)
+  const utmFromUrl = getUTMsFromURL();
+  const utmFromStore = readStoredUTMs();
+  const UTMS = { ...utmFromStore, ...utmFromUrl };
+  storeUTMs(UTMS);
 
-      await loadRDScript();
-      if (!window.RDStationForms) return;
+  // ===== RD LOAD / CREATE =====
+  let rdScriptLoaded = false;
+  let formCreated = false;
+  let observer = null;
+  let isOpening = false;
 
-      // cria o form
-      try {
-        new window.RDStationForms(FORM_ID, "null").createForm();
-        formCreated = true;
-      } catch (e) {
-        console.error(e);
+  function loadRDScript() {
+    return new Promise((resolve, reject) => {
+      if (rdScriptLoaded || window.RDStationForms) {
+        rdScriptLoaded = true;
+        resolve();
+        return;
       }
+
+      const existing = document.querySelector(`script[src="${RD_SCRIPT_SRC}"]`);
+      if (existing) {
+        existing.addEventListener("load", () => resolve());
+        existing.addEventListener("error", () => reject());
+        return;
+      }
+
+      const s = document.createElement("script");
+      s.src = RD_SCRIPT_SRC;
+      s.async = true;
+      s.onload = () => { rdScriptLoaded = true; resolve(); };
+      s.onerror = () => reject(new Error("Falha ao carregar RDStation Forms"));
+      document.body.appendChild(s);
+    });
+  }
+
+  function resetRDContainer() {
+    const root = document.getElementById(FORM_ID);
+    if (!root) return;
+
+    // Para observer antigo se tiver
+    if (observer) {
+      observer.disconnect();
+      observer = null;
     }
 
-    async function openModal() {
-      overlay.classList.add("is-open");
-      overlay.setAttribute("aria-hidden", "false");
-      document.body.classList.add("modal-open");
+    // Limpa o HTML do RD (isso força o RD a renderizar de novo no próximo open)
+    root.innerHTML = "";
+    formCreated = false;
+  }
 
-      // foca no modal (acessibilidade)
-      modal.setAttribute("tabindex", "-1");
-      modal.focus();
+  async function ensureForm() {
+    // Se já está criado MAS por algum motivo não tem <form> dentro, recria
+    const root = document.getElementById(FORM_ID);
+    const existingForm = root ? root.querySelector("form") : null;
+    if (formCreated && existingForm) return;
 
-      // garante que o form seja carregado/criado ao abrir
-      await ensureForm();
+    await loadRDScript();
+    if (!window.RDStationForms) return;
+
+    try {
+      // Se estava "meio criado" e sumiu, reseta antes de criar de novo
+      if (formCreated && !existingForm) resetRDContainer();
+
+      new window.RDStationForms(FORM_ID, "null").createForm();
+      formCreated = true;
+    } catch (e) {
+      console.error("[RD] createForm error:", e);
     }
+  }
 
-    function closeModal() {
-      overlay.classList.remove("is-open");
-      overlay.setAttribute("aria-hidden", "true");
-      document.body.classList.remove("modal-open");
-    }
+  // ===== APPLY UTMS INTO THE RD FORM =====
+  function hideFieldWrapper(el) {
+    const wrapper =
+      el.closest('.bricks-form__field, .bricks-form__field-wrapper, .form-group, .field, [data-testid]') ||
+      el.parentElement;
+    if (wrapper) wrapper.style.display = "none";
+  }
 
-    // abre ao clicar em qualquer .abrirFormulario
-    document.addEventListener("click", (e) => {
-      const btn = e.target.closest(".abrirFormulario");
-      if (btn) {
-        e.preventDefault();
-        openModal();
+  function setInputValue(input, value) {
+    input.value = value || "";
+    input.dispatchEvent(new Event("input", { bubbles: true }));
+    input.dispatchEvent(new Event("change", { bubbles: true }));
+  }
+
+  function applyUTMsToRDForm() {
+    const root = document.getElementById(FORM_ID);
+    if (!root) return false;
+
+    const form = root.querySelector("form");
+    if (!form) return false;
+
+    UTM_KEYS.forEach((k) => {
+      const fieldName = "cf_" + k;
+      let input = form.querySelector(`[name="${fieldName}"]`);
+
+      if (!input) {
+        input = document.createElement("input");
+        input.type = "hidden";
+        input.name = fieldName;
+        form.appendChild(input);
+      } else {
+        if (input.tagName === "INPUT") input.type = "hidden";
+        hideFieldWrapper(input);
+      }
+
+      setInputValue(input, UTMS[k] || "");
+    });
+
+    return true;
+  }
+
+  function startObserver() {
+    if (observer) return;
+
+    observer = new MutationObserver(() => {
+      const ok = applyUTMsToRDForm();
+      if (ok) {
+        observer.disconnect();
+        observer = null;
       }
     });
 
-    // fecha no X
-    btnClose.addEventListener("click", closeModal);
+    observer.observe(document.documentElement, { childList: true, subtree: true });
+  }
 
-    // fecha clicando na overlay (mas não fecha clicando dentro do modal)
-    overlay.addEventListener("click", (e) => {
-      if (e.target === overlay) closeModal();
-    });
+  async function openModal() {
+    if (isOpening) return; // evita double click / corrida
+    isOpening = true;
 
-    // fecha com ESC
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape" && overlay.classList.contains("is-open")) {
-        closeModal();
-      }
-    });
-  })();
-    </script>
+    overlay.classList.add("is-open");
+    overlay.setAttribute("aria-hidden", "false");
+    document.body.classList.add("modal-open");
 
-    <header class="header" id="home"> 
+    modal.setAttribute("tabindex", "-1");
+    modal.focus();
+
+    // GARANTIA: sempre recria o form ao abrir (resolve 100% o seu caso)
+    resetRDContainer();
+    await ensureForm();
+
+    const ok = applyUTMsToRDForm();
+    if (!ok) startObserver();
+
+    isOpening = false;
+  }
+
+  function closeModal() {
+    overlay.classList.remove("is-open");
+    overlay.setAttribute("aria-hidden", "true");
+    document.body.classList.remove("modal-open");
+
+    // IMPORTANTE: resetar ao fechar evita “form fantasma” na próxima abertura
+    resetRDContainer();
+  }
+
+  // abre ao clicar em qualquer .abrirFormulario
+  document.addEventListener("click", (e) => {
+    const btn = e.target.closest(".abrirFormulario");
+    if (btn) {
+      e.preventDefault();
+      openModal();
+    }
+  });
+
+  btnClose.addEventListener("click", closeModal);
+
+  overlay.addEventListener("click", (e) => {
+    if (e.target === overlay) closeModal();
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && overlay.classList.contains("is-open")) {
+      closeModal();
+    }
+  });
+})();
+</script>
+
+    <header class="header v2" id="home"> 
       <div class="wrapper">
         <div class="content">
             <div class="text">
               <img class="logo" src="../assets/logo.png" alt="">
-                  <div class="head">
+                  <!-- <div class="head">
                     <h3>Imersão ao vivo e online</h3>
-                    <p>Dias 24 a 26 de fevereiro às 19h07</p>
-                  </div>
+                  </div> -->
 
-                  <h1 class="v3">Day Trade não é profissão. É apenas uma ferramenta.</h1>
+                  <h1 class="v2">A estrutura que gerou <span>194mil em 4 meses</span></h1>
 
-                  <p class="v3">O método baseado em 50 mil análises que está transformando traders perdedores em profissionais consistentes.</p>
+                  <p class="v2 um">Se Você Ainda Faz Day Trade Como Todo Mundo, Você Está 5 Anos Atrasado</p>
 
-                  <a href="#planos"><button class="button abrirFormulario">GARANTIR MINHA VAGA GRATUITA</button></a>
+                  <p class="v2">Análise de 50.000 avaliações de day trade revelou: Os 5% que lucram fazem o OPOSTO do que 95% aprendeu. <span class="cor">Descubra o que é em 3 dias ao vivo</span>.</p>
+
+                  <a href="#planos"><button class="button abrirFormulario">Desbloquear acesso</button></a>
+
+                  <p class="dia">Dias 24 a 26 de fevereiro às 19h07</p>
             </div>              
           </div>
       </div>      
       <div class="image">
-        <img class="desktop" src="../assets/bg desktop.avif" alt="">
-        <img class="mobile" src="../assets/bg mobile.avif" alt="">
+        <img class="desktop" src="../assets/bgv2 desktop.avif" alt="">
+        <img class="mobile" src="../assets/bgv2 mobile.avif" alt="">
       </div>
     </header>
 

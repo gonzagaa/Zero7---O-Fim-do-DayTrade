@@ -1,5 +1,5 @@
 @import './global.css';
-@import './home.css';
+@import './home.css?v=2qwdqwe';
 @import './sectionInicio.css';
 @import './sectionDores.css';
 @import './sectionNove.css';
@@ -12,6 +12,6 @@
 @import './head.css';
 @import './modalDepoimento.css';
 @import './barraCarregamento.css';
-@import './modalForm.css?v=2';
+@import './modalForm.css?v=2qwd';
 
 

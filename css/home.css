@@ -14,6 +14,10 @@
     padding-top: 70%;
     padding-bottom: 15%;
   }
+
+  #home.v2 {
+    padding-top: 85%;
+  }
   
   #home .wrapper {
     position: relative;
@@ -71,7 +75,7 @@
 
   #home img.logo {
     width: 15rem;
-    margin-bottom: 2rem;
+    margin-bottom: 1rem;
   }
 
   #home h1 {
@@ -87,23 +91,35 @@
 
   #home h1.v3,
   #home h1.v2 {
-    font-size: 2.3rem;
+    font-size: 2.6rem;
+    line-height: 1.1;
   }
   
   #home h1 span {
     font-family: var(--ncs);
-    color: var(--primary-color);
+    text-shadow: 0 0 18px #ffffff;
   }
   
   #home p {
     font-size: 1.4rem;
     font-weight: 300;
     color: #ffffff;
-    line-height: 1.4;
+    line-height: 1.2;
+  }
+
+  #home p.dia {
+    font-size: 1.6rem;
+    margin-top: 1rem;
+  }
+
+  #home p.v2.um {
+    font-size: 1.6rem;
+    font-weight: 500;
+    margin-bottom: 1rem;
   }
 
   #home p span {
-    font-weight: 300;
+    font-weight: 600;
     color: #ffffff;
   }
 
@@ -208,6 +224,10 @@
   
       /* mask-image: linear-gradient(to bottom, #000 80%, transparent)  */
     }
+
+    header#home.v2 {
+      padding-top: 0;
+    }
   
     header#home .head {
       width: 90%;
@@ -265,6 +285,10 @@
       margin-top: -10%;
     }
 
+    header#home.v2 .text {
+      margin-top: 0;
+    }
+
     header#home .content .head {
       display: flex;
       align-items: center;
@@ -303,9 +327,7 @@
 
     header#home .content h1 span {
     font-size: 4.5rem;
-    background: var(--gradient);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 18px #ffffff8d;
     }
 
     header#home .content a {
