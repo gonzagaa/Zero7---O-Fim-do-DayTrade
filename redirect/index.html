@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta http-equiv="x-ua-compatible" content="ie=edge" />
+  <title>Redirecionando...</title>
+
+  <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-KCJQPMC');</script>
+    <!-- End Google Tag Manager -->
+
+  <style>
+    :root{
+      --red: #BE0000;
+      --wine: #130405;
+      --black: #000000;
+      --text: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.70);
+    }
+
+    *{ box-sizing:border-box; }
+    html, body { height: 100%; }
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color: var(--text);
+      background:
+        radial-gradient(1200px 700px at 20% 15%, rgba(190,0,0,.22), transparent 55%),
+        radial-gradient(900px 600px at 80% 20%, rgba(190,0,0,.14), transparent 60%),
+        radial-gradient(900px 700px at 50% 95%, rgba(19,4,5,.65), transparent 55%),
+        linear-gradient(180deg, var(--black), var(--wine));
+      overflow:hidden;
+    }
+
+    /* Camadas de glow/blur */
+    .glow {
+      position: fixed;
+      inset: -20%;
+      pointer-events: none;
+      filter: blur(60px);
+      opacity: .9;
+      background:
+        radial-gradient(500px 320px at 30% 35%, rgba(190,0,0,.35), transparent 60%),
+        radial-gradient(520px 360px at 75% 45%, rgba(190,0,0,.28), transparent 62%),
+        radial-gradient(520px 420px at 50% 80%, rgba(190,0,0,.18), transparent 65%);
+      transform: translateZ(0);
+    }
+
+    /* Textura bem sutil */
+    .noise {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: .08;
+      background-image:
+        radial-gradient(circle at 10% 10%, rgba(255,255,255,.06) 0 1px, transparent 1px),
+        radial-gradient(circle at 40% 70%, rgba(255,255,255,.05) 0 1px, transparent 1px),
+        radial-gradient(circle at 80% 30%, rgba(255,255,255,.04) 0 1px, transparent 1px);
+      background-size: 220px 220px, 260px 260px, 320px 320px;
+      mix-blend-mode: overlay;
+    }
+
+    .wrap{
+      min-height: 100vh;
+      width: 100%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding: 24px;
+      position: relative;
+    }
+
+    /* “Quase centralizado” (um pouco mais pra cima) */
+    .center{
+      transform: translateY(-10px);
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap: 18px;
+      text-align:center;
+    }
+
+    /* Cartão sutil (sem parecer template genérico) */
+    .panel{
+      
+    }
+
+    .loader{
+      width: 64px;
+      height: 64px;
+      border-radius: 999px;
+      position: relative;
+      display:grid;
+      place-items:center;
+      margin: 0 auto;
+      /* aro externo com conic gradient */
+      background:
+        conic-gradient(from 0deg,
+          rgba(190,0,0,1),
+          rgba(190,0,0,.15),
+          rgba(190,0,0,1));
+      animation: spin 1s linear infinite;
+      box-shadow:
+        0 0 24px rgba(190,0,0,.35),
+        0 0 60px rgba(190,0,0,.18);
+
+    }
+
+    /* furo interno */
+    .loader::before{
+      content:"";
+      width: 52px;
+      height: 52px;
+      border-radius: 999px;
+      background:
+        radial-gradient(40px 40px at 50% 40%, rgba(190,0,0,.18), transparent 60%),
+        linear-gradient(180deg, rgba(0,0,0,.75), rgba(19,4,5,.85));
+      border: 1px solid rgba(255,255,255,.08);
+      box-shadow: 0 0 0 1px rgba(0,0,0,.35) inset;
+    }
+
+    /* brilhozinho “pulsando” */
+    .pulse{
+      position:absolute;
+      inset:-10px;
+      border-radius:999px;
+      background: radial-gradient(circle, rgba(190,0,0,.22), transparent 60%);
+      filter: blur(10px);
+      animation: pulse 1.2s ease-in-out infinite;
+      z-index:-1;
+    }
+
+    .text{
+      font-size: 18px;
+      letter-spacing: .2px;
+      color: var(--text);
+      margin: 0;
+      text-shadow: 0 6px 20px rgba(0,0,0,.55);
+      white-space: nowrap;
+
+      margin-top: .5rem;
+    }
+
+    /* responsivo */
+    @media (max-width: 420px){
+      .panel{ padding: 22px 20px; border-radius: 16px; }
+      .loader{ width: 58px; height: 58px; }
+      .loader::before{ width: 46px; height: 46px; }
+      .text{ font-size: 16px; }
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes pulse {
+      0%, 100% { opacity: .55; transform: scale(1); }
+      50% { opacity: .95; transform: scale(1.06); }
+    }
+
+    /* Acessibilidade: reduzir movimento */
+    @media (prefers-reduced-motion: reduce){
+      .loader{ animation: none; }
+      .pulse{ animation: none; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="glow" aria-hidden="true"></div>
+  <div class="noise" aria-hidden="true"></div>
+
+  <main class="wrap" role="main">
+    <div class="center">
+      <div class="panel" aria-live="polite">
+        <div style="position:relative; width:fit-content; margin:0 auto;">
+          <div class="pulse" aria-hidden="true"></div>
+          <div class="loader" aria-hidden="true"></div>
+        </div>
+
+        <p class="text">Estamos te redirecionando...</p>
+      </div>
+    </div>
+  </main>
+
+  <script>
+  (function () {
+    const url = "https://www.youtube.com/live/0Z2FRMq-4i8";
+    let t;
+
+    function startRedirect() {
+      clearTimeout(t);
+      t = setTimeout(() => {
+        window.location.replace(url); // replace evita criar histórico extra
+      }, 2000);
+    }
+
+    // roda ao abrir e também quando voltar pelo botão "voltar" (inclui bfcache)
+    window.addEventListener("pageshow", startRedirect);
+
+    // segurança extra: se a aba voltar a ficar visível, garante que tá contando
+    document.addEventListener("visibilitychange", () => {
+      if (!document.hidden) startRedirect();
+    });
+  })();
+</script>
+</body>
+</html>
