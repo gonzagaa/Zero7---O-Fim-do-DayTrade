@@ -490,6 +490,24 @@
       </div>
     </section>
 
+  <script>
+  (function () {
+    // Data/hora de corte: 24/02/2026 às 19:10 (horário local do navegador)
+    // JS: mês é 0-based, então fevereiro = 1
+    const dataCorte = new Date(2026, 1, 24, 19, 10, 0);
+
+    const agora = new Date();
+
+    // Evita redirecionar se já estiver na página de destino
+    const destino = "./aula-1/index.html";
+    const jaEstaNoDestino = window.location.pathname.includes("/aula-1/");
+
+    if (agora >= dataCorte && !jaEstaNoDestino) {
+      window.location.replace(destino);
+    }
+  })();
+</script>
+
      <!-- Google Tag Manager (noscript) -->
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KCJQPMC"
     height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
